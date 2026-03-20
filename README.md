@@ -31,17 +31,14 @@
 
 ## 📸 Screenshots
 
-### 📊 Dashboard
+### 📊Dashboard
+![Dashboard](ExpenseTracker/screenshots/dashboard.png)
 
-![Dashboard](screenshots/dashboard.png)
+### 💸Transactions
+![Transactions](ExpenseTracker/screenshots/transactions.png)
 
-### 💸 Transactions
-
-![Transactions](screenshots/transactions.png)
-
-### 🗂️ Categories
-
-![Categories](screenshots/categories.png)
+### 🗂️Categories
+![Categories](ExpenseTracker/screenshots/categories.png)
 
 ---
 
