@@ -1,0 +1,157 @@
+﻿@model ExpenseTracker.ViewModels.MonthlyReportViewModel
+
+@{
+    ViewData["Title"] = "Monthly Report";
+}
+
+<h1 class="page-title">Monthly Report</h1>
+
+<div class="row g-4 mb-5">
+    <div class="col-md-4">
+        <div class="summary-card summary-income">
+            <h5>Total Income</h5>
+            <h3>@Model.TotalIncome.ToString("N2")</h3>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="summary-card summary-expense">
+            <h5>Total Expenses</h5>
+            <h3>@Model.TotalExpenses.ToString("N2")</h3>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="summary-card summary-balance">
+            <h5>Total Balance</h5>
+            <h3>@Model.TotalBalance.ToString("N2")</h3>
+        </div>
+    </div>
+</div>
+
+<div class="mt-5">
+    <h3 class="section-title">Monthly Overview</h3>
+
+    @if (Model.Items.Any())
+    {
+        <div class="form-card mb-4">
+            <div class="row">
+                <div class="col-lg-10">
+                    <canvas id="monthlyReportChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-responsive table-modern">
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>Total Income</th>
+                        <th>Total Expenses</th>
+                        <th>Balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td class="fw-semibold">@item.MonthName</td>
+                            <td>
+                                <span class="text-success fw-semibold">
+                                    @item.TotalIncome.ToString("N2")
+                                </span>
+                            </td>
+                            <td>
+                                <span class="text-danger fw-semibold">
+                                    @item.TotalExpenses.ToString("N2")
+                                </span>
+                            </td>
+                            <td>
+                                @if (item.Balance >= 0)
+                                {
+                                    <span class="text-success fw-bold">
+                                        @item.Balance.ToString("N2")
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="text-danger fw-bold">
+                                        @item.Balance.ToString("N2")
+                                    </span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="empty-state">
+            No report data available yet.
+        </div>
+    }
+</div>
+
+@section Scripts {
+    @if (Model.Items.Any())
+    {
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <script>
+            const monthlyLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+                        Model.Items
+                                .OrderBy(x => x.Year)
+                                .ThenBy(x => x.Month)
+                                .Select(x => x.MonthName)));
+
+    const monthlyIncomeData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+                Model.Items
+                        .OrderBy(x => x.Year)
+                        .ThenBy(x => x.Month)
+                        .Select(x => x.TotalIncome)));
+
+    const monthlyExpenseData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+                Model.Items
+                        .OrderBy(x => x.Year)
+                        .ThenBy(x => x.Month)
+                        .Select(x => x.TotalExpenses)));
+
+    const ctx = document.getElementById('monthlyReportChart');
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: monthlyLabels,
+                    datasets: [
+                        {
+                            label: 'Income',
+                            data: monthlyIncomeData,
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Expenses',
+                            data: monthlyExpenseData,
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: true
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        </script>
+    }
+}

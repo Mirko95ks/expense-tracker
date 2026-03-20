@@ -1,0 +1,73 @@
+﻿@model ExpenseTracker.Models.Transaction
+
+@{
+    ViewData["Title"] = "Transaction Details";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="page-title mb-0">Transaction Details</h1>
+
+    <div class="d-flex gap-2">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+        <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+    </div>
+</div>
+
+<div class="form-card">
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div>
+                <div class="text-muted mb-1">Date</div>
+                <div class="fw-semibold">@Model.Date.ToString("dd.MM.yyyy")</div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div>
+                <div class="text-muted mb-1">Type</div>
+                <div>
+                    @if (Model.Type == ExpenseTracker.Models.TransactionType.Income)
+                    {
+                        <span class="badge-soft-income">Income</span>
+                    }
+                    else
+                    {
+                        <span class="badge-soft-expense">Expense</span>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div>
+                <div class="text-muted mb-1">Category</div>
+                <div class="fw-semibold">@Model.Category?.Name</div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div>
+                <div class="text-muted mb-1">Amount</div>
+                <div>
+                    @if (Model.Type == ExpenseTracker.Models.TransactionType.Income)
+                    {
+                        <span class="text-success fw-bold fs-5">+ @Model.Amount.ToString("N2")</span>
+                    }
+                    else
+                    {
+                        <span class="text-danger fw-bold fs-5">- @Model.Amount.ToString("N2")</span>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div>
+                <div class="text-muted mb-1">Description</div>
+                <div class="fw-semibold">
+                    @(string.IsNullOrWhiteSpace(Model.Description) ? "No description" : Model.Description)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

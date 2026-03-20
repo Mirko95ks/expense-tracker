@@ -1,0 +1,108 @@
+﻿@model ExpenseTracker.ViewModels.TransactionFormViewModel
+
+@{
+    ViewData["Title"] = "Create Transaction";
+}
+
+<h1 class="page-title">Create Transaction</h1>
+
+<div class="row">
+    <div class="col-lg-6">
+        <div class="form-card">
+
+            <form asp-action="Create">
+
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Amount" class="form-label"></label>
+                    <input asp-for="Amount" class="form-control" />
+                    <span asp-validation-for="Amount" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Date" class="form-label"></label>
+                    <input asp-for="Date" class="form-control" />
+                    <span asp-validation-for="Date" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Type" class="form-label"></label>
+                    <select asp-for="Type" class="form-select" asp-items="ViewBag.Type"></select>
+                    <span asp-validation-for="Type" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="CategoryId" class="form-label"></label>
+                    <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.CategoryId"></select>
+                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Description" class="form-label"></label>
+                    <input asp-for="Description" class="form-control" />
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        Create
+                    </button>
+
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        Cancel
+                    </a>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        const allCategories = @Html.Raw(ViewBag.AllCategoriesJson);
+
+        const typeSelect = document.getElementById("Type");
+        const categorySelect = document.getElementById("CategoryId");
+
+        function refreshCategories() {
+
+            const selectedType = parseInt(typeSelect.value);
+            const currentSelectedValue = categorySelect.value;
+
+            categorySelect.innerHTML = "";
+
+            const filteredCategories = allCategories.filter(c => c.type === selectedType);
+
+            for (const category of filteredCategories) {
+
+                const option = document.createElement("option");
+
+                option.value = category.id;
+                option.text = category.name;
+
+                if (category.id.toString() === currentSelectedValue) {
+                    option.selected = true;
+                }
+
+                categorySelect.appendChild(option);
+            }
+
+            const stillExists = filteredCategories.some(c => c.id.toString() === currentSelectedValue);
+
+            if (!stillExists && filteredCategories.length > 0) {
+                categorySelect.value = filteredCategories[0].id;
+            }
+        }
+
+        typeSelect.addEventListener("change", refreshCategories);
+
+        refreshCategories();
+    </script>
+}
